@@ -1,21 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"gofr.dev/pkg/gofr"
 	"BOOK-INVENTORY/controllers"
+	"fmt"
+
+	"gofr.dev/pkg/gofr"
+	// "BOOK-INVENTORY/middlewares"
 )
 
 // create Book table
-type Book struct {
-	// ID               int    `json:"id"`
-	Title            string `json:"title"`
-	Author           string `json:"author"`
-	Price            int    `json:"price"`
-	QuantityAvailable int    `json:"quantity_available"`
-}
-
-
 
 func main(){
 	
@@ -25,6 +18,7 @@ func main(){
 	// createBook - > http://localhost:3000/books
 	// /books-> a book is getting created 
 	// (H.W)  How will you add multiple books ? 
+	// app.Server.UseMiddleware(middlewares.CreateBookMiddleware())
 	app.POST("/books",controllers.CreateBook)
 
 	// getBook 
@@ -35,7 +29,7 @@ func main(){
 
 	// updateBook -
 	// partial update 
-	app.PATCH("/book/{id}",controllers.UpdateBook)
+	app.PATCH("/book",controllers.UpdateBookQuantity)
 
     // Starts the server, it will listen on the default port 8000.
     // it can be over-ridden through configs
