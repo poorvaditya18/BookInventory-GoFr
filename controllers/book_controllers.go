@@ -1,12 +1,13 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/url"
-	"errors"
-	"gofr.dev/pkg/gofr"
 	"strconv"
+
+	"gofr.dev/pkg/gofr"
 )
 
 // create book structure
@@ -96,7 +97,7 @@ func GetBook(ctx *gofr.Context)(interface{}, error){
 	title := queryValues.Get("Title")
 
 	if title == "" {
-        return nil, errors.New("Title cannot be empty")
+        return nil, errors.New("title cannot be empty")
     }
 
 	fmt.Printf("Fetching book from db....")
@@ -148,16 +149,53 @@ func UpdateBookQuantity(ctx *gofr.Context)(interface{}, error){
         return nil, err
     }
 
-    resp, err := ctx.DB().ExecContext(ctx, "UPDATE book SET QuantityAvailable = ? WHERE Title = ?", QuantityAvailable, Title)
-    if err != nil {
-        return nil, err
-    }
+	result, err := ctx.DB().ExecContext(ctx, "UPDATE book SET QuantityAvailable = ? WHERE Title = ?", QuantityAvailable, Title)
 
-    return resp, nil
+
+	if err != nil {
+		fmt.Println("Error updating book:", err)
+		return nil, err
+	}
+	
+	// Check rows affected by the update operation
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return nil, err
+	}
+
+	if rowsAffected == 0 {
+		return nil, fmt.Errorf("no book found with Title: %s", Title)
+	}
+
+	fmt.Println("Book updated successfully")
+	return "Successfully Updated Quantity Of Book", nil
 }
 
 
 // delete a book 
+func DeleteBook(ctx *gofr.Context)(interface{}, error){
+	req := ctx.Request()
+    queryValues := req.URL.Query()
+    bookID := queryValues.Get("id")
 
+    // Perform the delete operation in the database
+    result, err := ctx.DB().ExecContext(ctx,"DELETE FROM book WHERE BookID = ?", bookID)
+    if err != nil {
+        fmt.Println("Error deleting book:", err)
+        return result, err
+    }
+
+	rowsAffected, err := result.RowsAffected()
+    if err != nil {
+        fmt.Println("Error getting rows affected:", err)
+        return nil, err
+    }
+
+	if rowsAffected == 0 {
+        return nil, fmt.Errorf("Book with ID %s is not present", bookID)
+    }
+	
+    return "Successfully deleted Book", nil
+}
 
 

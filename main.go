@@ -19,7 +19,7 @@ func main(){
 	// /books-> a book is getting created 
 	// (H.W)  How will you add multiple books ? 
 	// app.Server.UseMiddleware(middlewares.CreateBookMiddleware())
-	app.POST("/books",controllers.CreateBook)
+	app.POST("/book",controllers.CreateBook)
 
 	// getBook 
 	app.GET("/book",controllers.GetBook)
@@ -31,6 +31,9 @@ func main(){
 	// partial update 
 	app.PATCH("/book",controllers.UpdateBookQuantity)
 
+
+	// deleteBook 
+	app.DELETE("/book",controllers.DeleteBook)
     // Starts the server, it will listen on the default port 8000.
     // it can be over-ridden through configs
 	fmt.Println("Starting server ..... ")
