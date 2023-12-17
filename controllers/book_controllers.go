@@ -41,11 +41,22 @@ func CreateBook(ctx *gofr.Context)(interface{}, error){
 
 	Title := formData.Get("Title")
 	Author := formData.Get("Author")
-	Price := formData.Get("Price")
-	QuantityAvailable := formData.Get("QuantityAvailable")
+	PriceStr := formData.Get("Price")
+	QuantityAvailableStr := formData.Get("QuantityAvailable")
 	
+	// Convert string Price to integer
+	Price, err := strconv.Atoi(PriceStr)
+	if err != nil {
+		return nil, err // Handle the error if conversion fails
+	}
 
-	fmt.Printf("Title : %s, \n Author : %s,\n Price : %s,\n QuantityAvailable: %s\n", Title, Author, Price, QuantityAvailable)
+	// Convert string QuantityAvailable to integer
+	QuantityAvailable, err := strconv.Atoi(QuantityAvailableStr)
+	if err != nil {
+		return nil, err // Handle the error if conversion fails
+	}
+
+	fmt.Printf("Title : %s, \n Author : %s,\n Price : %d,\n QuantityAvailable: %d\n", Title, Author, Price, QuantityAvailable)
 
 
 	// db layer ------
@@ -57,6 +68,7 @@ func CreateBook(ctx *gofr.Context)(interface{}, error){
 	if err != nil {
 		return "Not able to create", err
 	}
+	
 	return "Successfully Created Book", err
 }
 
